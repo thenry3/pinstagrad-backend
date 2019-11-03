@@ -16,6 +16,8 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", Handler)
 
+	apple := new main.User()
+
 	log.Fatal(http.ListenAndServe(":3000", r))
 
 }
