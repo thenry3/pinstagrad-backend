@@ -7,6 +7,7 @@ import (
 // Season types
 type Season int
 
+// Seasons
 const (
 	Spring Season = 0
 	Summer Season = 1
@@ -17,17 +18,20 @@ const (
 // TimeDay types
 type TimeDay int
 
+// Times of Day
 const (
 	Night TimeDay = 1
 	Day   TimeDay = 0
 )
 
+// User structure
 type User struct {
 	Name     string   `json: "name"`
 	Liked    []*Photo `json: "liked"`
 	Pictures int      `json: "pictures"`
 }
 
+// Photo structure model
 type Photo struct {
 	Id           int       `json: "id"`
 	Tags         []string  `json: "tags"`
@@ -35,6 +39,7 @@ type Photo struct {
 	Photographer string    `json: "photographer"`
 }
 
+// Tags model
 type Tags struct {
 	Location string  `json: "location"`
 	Season   Season  `json: "season"`
