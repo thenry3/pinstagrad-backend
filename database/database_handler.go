@@ -2,22 +2,54 @@ package database
 
 import (
 	"context"
-	"fmt"
 	"log"
+	"strconv"
 
 	"firebase.google.com/go/db"
 
 	firebase "firebase.google.com/go"
 )
 
+// UpdatePhotoInRealtimeDatabase update images in realtime DB
+func UpdatePhotoInRealtimeDatabase(ctx context.Context, updatedPhoto *Photo, reference *db.Ref) {
+	currentPhoto := reference.Child("photos").Child(strconv.Itoa(updatedPhoto.UserID))
+	err := currentPhoto.Update(ctx, map[string]interface{}{
+		"UserID":       updatedPhoto.UserID,
+		"Pointer":      updatedPhoto.Pointer,
+		"Tags":         updatedPhoto.Tags,
+		"Uploadtime":   updatedPhoto.Uploadtime,
+		"Photographer": updatedPhoto.Photographer,
+	})
+	if err != nil {
+		log.Fatalln("Error setting value:", err)
+	}
+}
+
 // UploadPhotoToRealtimeDatabase uploads images to realtime DB
-func UploadPhotoToRealtimeDatabase(ctx context.Context, currentUser *User, photo *Photo, client *db.Client) {
-	ref := client.NewRef("restricted_access/secret_document")
+func UploadPhotoToRealtimeDatabase(ctx context.Context, photo *Photo, reference *db.Ref) {
+	photoRef := reference.Child("photos")
+	err := photoRef.Set(ctx, map[string]*Photo{
+		strconv.Itoa(photo.UserID): {
+			UserID:       photo.UserID,
+			Pointer:      photo.Pointer,
+			Tags:         photo.Tags,
+			Uploadtime:   photo.Uploadtime,
+			Photographer: photo.Photographer,
+		},
+	})
+	if err != nil {
+		log.Fatalln("Error setting value:", err)
+	}
+}
+
+// ConnectToReference uploads to document containing photos
+func ConnectToReference(ctx context.Context, client *db.Client) *db.Ref {
+	ref := client.NewRef("path-to-photos")
 	var data map[string]interface{}
 	if err := ref.Get(ctx, &data); err != nil {
 		log.Fatalln("Error reading from database:", err)
 	}
-	fmt.Println(data)
+	return ref
 }
 
 // ConnectToRealtimeDatabase connect to Firebase realtime DB
