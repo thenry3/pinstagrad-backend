@@ -10,6 +10,15 @@ import (
 	firebase "firebase.google.com/go"
 )
 
+// RetrieveAllPhotos retrieves images in realtime DB
+func RetrieveAllPhotos(ctx context.Context, reference *db.Ref) Photo {
+	var photo Photo
+	if err := reference.Get(ctx, &photo); err != nil {
+		log.Fatalln("Error reading value:", err)
+	}
+	return photo
+}
+
 // UpdatePhotoInRealtimeDatabase update images in realtime DB
 func UpdatePhotoInRealtimeDatabase(ctx context.Context, updatedPhoto *Photo, reference *db.Ref) {
 	currentPhoto := reference.Child("photos").Child(strconv.Itoa(updatedPhoto.UserID))
