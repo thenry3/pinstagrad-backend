@@ -26,7 +26,7 @@ func UpdatePhotoInRealtimeDatabase(ctx context.Context, updatedPhoto *Photo, ref
 }
 
 // UploadPhotoToRealtimeDatabase uploads images to realtime DB
-func UploadPhotoToRealtimeDatabase(ctx context.Context, photo *Photo, reference *db.Ref) {
+func UploadPhotoToRealtimeDatabase(ctx context.Context, photo Photo, reference *db.Ref) {
 	photoRef := reference.Child("photos")
 	err := photoRef.Set(ctx, map[string]*Photo{
 		strconv.Itoa(photo.UserID): {
