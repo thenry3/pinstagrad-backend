@@ -33,7 +33,7 @@ type User struct {
 
 // Photo structure model
 type Photo struct {
-	Id           int       `json: "id"`
+	ID           int       `json: "id"`
 	Tags         []string  `json: "tags"`
 	Uploadtime   time.Time `json: "uploadtime"`
 	Photographer string    `json: "photographer"`
