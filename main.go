@@ -15,6 +15,10 @@ import (
 
 //Helper functions
 
+func filters(photos []database.Photo) ([]database.Photo, error) {
+	return photos, nil
+}
+
 func createTagList(connectedTags string) []string {
 	var tags []string
 	return tags
@@ -61,6 +65,10 @@ func uploadPicture(w http.ResponseWriter, r *http.Request) {
 	app := firebaseController.FirebaseSDK()
 	dbRef := database.ConnectToReference(ctx, database.ConnectToRealtimeDatabase(ctx, app))
 	database.UploadPhotoToRealtimeDatabase(ctx, photo, dbRef)
+}
+
+func getAllPictures(w http.ResponseWriter, r *http.Request) {
+
 }
 
 func retrievePicture(w http.ResponseWriter, r *http.Request) {
