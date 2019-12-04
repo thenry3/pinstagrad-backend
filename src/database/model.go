@@ -39,9 +39,10 @@ type User struct {
 type Photo struct {
 	UserID       int       `json:"id"`
 	Pointer      string    `json:"pointer"`
-	Tags         []string  `json:"tags"`
+	Tags         [5]string `json:"tags"`
 	Uploadtime   time.Time `json:"uploadtime"`
 	Photographer string    `json:"photographer"`
+	UUID         string    `json:"uuid"`
 }
 
 // Tags structure of tags
