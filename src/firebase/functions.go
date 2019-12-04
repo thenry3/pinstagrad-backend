@@ -9,7 +9,9 @@ import (
 )
 
 // CreateFirebaseUser Creates Firebase user for DB interactions
-func CreateFirebaseUser(ctx context.Context, client *auth.Client, email string, emailVerified bool, phoneNumber string, password string, name string, photoURL string, status bool) *auth.UserRecord {
+func CreateFirebaseUser(client *auth.Client, email string, emailVerified bool, phoneNumber string, password string, name string, photoURL string, status bool) *auth.UserRecord {
+	ctx := context.Background()
+
 	params := (&auth.UserToCreate{}).
 		Email(email).
 		EmailVerified(emailVerified).
@@ -27,7 +29,9 @@ func CreateFirebaseUser(ctx context.Context, client *auth.Client, email string, 
 }
 
 // FirebaseCustomToken Intializes Firebase custom token for auth
-func FirebaseCustomToken(ctx context.Context, app *firebase.App) string {
+func FirebaseCustomToken(app *firebase.App) string {
+	ctx := context.Background()
+
 	client, err := app.Auth(context.Background())
 	if err != nil {
 		log.Fatalf("error getting Auth client: %v\n", err)
@@ -44,7 +48,9 @@ func FirebaseCustomToken(ctx context.Context, app *firebase.App) string {
 }
 
 // VerifyFirebaseToken Verifies Firebase custom token for auth
-func VerifyFirebaseToken(ctx context.Context, app *firebase.App, idToken string) *auth.Token {
+func VerifyFirebaseToken(app *firebase.App, idToken string) *auth.Token {
+	ctx := context.Background()
+
 	client, err := app.Auth(ctx)
 	if err != nil {
 		log.Fatalf("error getting Auth client: %v\n", err)
