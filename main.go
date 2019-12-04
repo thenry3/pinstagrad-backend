@@ -9,21 +9,23 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Rahul12344/pinstagrad-backend/config"
-
 	"firebase.google.com/go/auth"
+
+	firebaseController "firebase"
+
+	"gcloud/config"
 
 	"cloud.google.com/go/storage"
 	firebase "firebase.google.com/go"
-	firebaseController "github.com/Rahul12344/pinstagrad-backend/src/firebase"
 	"github.com/joho/godotenv"
 
-	"github.com/Rahul12344/pinstagrad-backend/src/database"
+	"database"
 
 	"github.com/gorilla/mux"
 
-	GCloud "github.com/Rahul12344/pinstagrad-backend/src/gcloud"
-	SignedURL "github.com/Rahul12344/pinstagrad-backend/src/gcloud/SignedURL"
+	GCloud "gcloud"
+
+	SignedURL "gcloud/SignedURL"
 )
 
 // Global variables
