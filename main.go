@@ -87,7 +87,7 @@ func uploadPictureHandler(w http.ResponseWriter, r *http.Request) {
 	photographer := strings.Join(r.URL.Query()["photographer"], "")
 	log.Print(photographer)
 
-	signedURL, key, err := SignedURL.SignedURLoptions("config/pinstagrad-back-7.json", "PUT", conf.CloudStorage.Bucket)
+	signedURL, key, err := SignedURL.SignedURLoptions("./gcloud/config/pinstagrad-back-7.json", "PUT", conf.CloudStorage.Bucket)
 	GCloud.Upload(cloudClient, signedURL, conf.CloudStorage.Bucket, point, key)
 	if err != nil {
 		log.Fatalf("Failed to create signed URL: %v", err)
@@ -126,7 +126,7 @@ func retrievePicture(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "/Users/rahulnatarajan/go/src/github.com/Rahul12344/pinstagrad-backend/config/pinstagrad-back-7.json")
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "./vendor/gcloud/config/pinstagrad-back-7.json")
 
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
@@ -148,7 +148,6 @@ func main() {
 	r.HandleFunc("/uploadpicture", uploadPictureHandler)
 	r.HandleFunc("/uploadpicture/{userid}/{point}/{}", uploadPictureHandler)
 	r.HandleFunc("/retrievepicture/{userid}/{picture}", retrievePicture)
-
 	log.Fatal(http.ListenAndServe(":3000", r))
 
 }

@@ -44,7 +44,7 @@ func FirebaseSDK() *firebase.App {
 	config := &firebase.Config{
 		DatabaseURL: "https://pinstagrad-7f307.firebaseio.com/",
 	}
-	opt := option.WithCredentialsFile("config/serviceAccountKey.json")
+	opt := option.WithCredentialsFile("./vendor/gcloud/config/serviceAccountKey.json")
 	app, err := firebase.NewApp(context.Background(), config, opt)
 	if err != nil {
 		log.Fatalf("error initializing app: %v\n", err)
