@@ -30,16 +30,23 @@ const (
 
 // User structure of user
 type User struct {
-	Name     string   `json:"name"`
-	Liked    []*Photo `json:"liked"`
-	Pictures int      `json:"pictures"`
+	Name        string   `json:"name"`
+	Liked       []*Photo `json:"liked"`
+	Pictures    int      `json:"pictures"`
+	Email       string   `json:"email"`
+	Password    string   `json:"password"`
+	PhoneNumber string   `json:"phonenumber"`
+	ProfilePic  string   `json:"profilepic"`
+	UID         string   `json:"uid"`
 }
 
 // Photo structure of photo
 type Photo struct {
 	UserID       int       `json:"id"`
 	Pointer      string    `json:"pointer"`
-	Tags         [5]string `json:"tags"`
+	Location     string    `json:"location"`
+	Time         TimeDay   `json:"time"`
+	Season       Season    `json:"season"`
 	Uploadtime   time.Time `json:"uploadtime"`
 	Photographer string    `json:"photographer"`
 	UUID         string    `json:"uuid"`

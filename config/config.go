@@ -13,9 +13,16 @@ type CloudStorageConfig struct {
 	Project string
 }
 
+// CloudStorageSettingsConfig holds cloud storage environment variables
+type CloudStorageSettingsConfig struct {
+	ProfileBucket string
+	URI           string
+}
+
 // Config holds config constructs
 type Config struct {
-	CloudStorage CloudStorageConfig
+	CloudStorage  CloudStorageConfig
+	CloudSettings CloudStorageSettingsConfig
 }
 
 // New returns a new Config struct
@@ -23,8 +30,12 @@ func New() *Config {
 	return &Config{
 		CloudStorage: CloudStorageConfig{
 			Bucket:  getEnv("BUCKET_NAME", ""),
-			URI:     (getEnv("GOOGLE_CLOUD_STORAGE_URI", "")) + (getEnv("BUCKET_NAME", "")),
+			URI:     (getEnv("GOOGLE_CLOUD_STORAGE_URI", "")) + (getEnv("BUCKET_NAME", "")) + "/",
 			Project: getEnv("GOOGLE_CLOUD_PROJECT", ""),
+		},
+		CloudSettings: CloudStorageSettingsConfig{
+			ProfileBucket: getEnv("PROFILE_BUCKET_NAME", ""),
+			URI:           (getEnv("GOOGLE_CLOUD_STORAGE_URI", "")) + (getEnv("PROFILE_BUCKET_NAME", "")) + "/",
 		},
 	}
 }

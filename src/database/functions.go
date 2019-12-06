@@ -9,13 +9,32 @@ import (
 	firebase "firebase.google.com/go"
 )
 
-// RetrieveAllPhotos retrieves images in realtime DB
-func RetrieveAllPhotos(ctx context.Context, reference *db.Ref) Photo {
-	var photo Photo
-	if err := reference.Get(ctx, &photo); err != nil {
+// RetrieveIndividualPhoto retrieves singular image by uuid
+func RetrieveIndividualPhoto(ctx context.Context, reference *db.Ref, uuid string) Photo {
+	v := Photo{}
+	if err := reference.Child("all").Child(uuid).Get(ctx, &v); err != nil {
 		log.Fatalln("Error reading value:", err)
 	}
-	return photo
+	return v
+}
+
+// RetrieveAllPhotos retrieves images in realtime DB
+func RetrieveAllPhotos(ctx context.Context, reference *db.Ref) map[string]Photo {
+	v := map[string]Photo{}
+	if err := reference.Child("all").Get(ctx, &v); err != nil {
+		log.Fatalln("Error reading value:", err)
+	}
+	return v
+}
+
+// UploadPhotoToUserDatabase uploads images to realtime DB
+func UploadPhotoToUserDatabase(ctx context.Context, user User, reference *db.Ref) {
+	photoRef := reference.Child(user.UID)
+
+	err := photoRef.Set(ctx, user)
+	if err != nil {
+		log.Fatalln("Error setting value:", err)
+	}
 }
 
 // UpdatePhotoInRealtimeDatabase update images in realtime DB
@@ -24,7 +43,9 @@ func UpdatePhotoInRealtimeDatabase(ctx context.Context, updatedPhoto *Photo, ref
 	err := currentPhoto.Update(ctx, map[string]interface{}{
 		"UserID":       updatedPhoto.UserID,
 		"Pointer":      updatedPhoto.Pointer,
-		"Tags":         updatedPhoto.Tags,
+		"Location":     updatedPhoto.Location,
+		"Season":       updatedPhoto.Season,
+		"Time":         updatedPhoto.Time,
 		"Uploadtime":   updatedPhoto.Uploadtime,
 		"Photographer": updatedPhoto.Photographer,
 	})
@@ -44,8 +65,8 @@ func UploadPhotoToRealtimeDatabase(ctx context.Context, photo Photo, reference *
 }
 
 // ConnectToReference uploads to document containing photos
-func ConnectToReference(ctx context.Context, client *db.Client) *db.Ref {
-	ref := client.NewRef("photos/uploads")
+func ConnectToReference(ctx context.Context, client *db.Client, path string) *db.Ref {
+	ref := client.NewRef(path)
 	var data map[string]interface{}
 	if err := ref.Get(ctx, &data); err != nil {
 		log.Fatalln("Error reading from database:", err)
@@ -53,7 +74,7 @@ func ConnectToReference(ctx context.Context, client *db.Client) *db.Ref {
 	return ref
 }
 
-// ConnectToRealtimeDatabase connect to Firebase realtime DB
+// ConnectToRealtimeDatabase connect to Firebase realtime database
 func ConnectToRealtimeDatabase(ctx context.Context, app *firebase.App) *db.Client {
 	client, err := app.Database(ctx)
 	if err != nil {

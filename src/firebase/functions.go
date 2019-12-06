@@ -4,13 +4,25 @@ import (
 	"context"
 	"log"
 
+	"cloud.google.com/go/storage"
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
+
+	"github.com/Rahul12344/pinstagrad-backend/config"
+	GCloud "github.com/Rahul12344/pinstagrad-backend/src/gcloud"
+	SignedURL "github.com/Rahul12344/pinstagrad-backend/src/gcloud/SignedURL"
 )
 
 // CreateFirebaseUser Creates Firebase user for DB interactions
-func CreateFirebaseUser(client *auth.Client, email string, emailVerified bool, phoneNumber string, password string, name string, photoURL string, status bool) *auth.UserRecord {
+func CreateFirebaseUser(conf *config.Config, contentType string, gCloudClient *storage.Client, client *auth.Client, email string, emailVerified bool, phoneNumber string, password string, name string, photoURL string, status bool) *auth.UserRecord {
 	ctx := context.Background()
+
+	signedURL, key, err := SignedURL.SignedURLoptions("config/pinstagrad-back-7.json", "PUT", conf.CloudSettings.ProfileBucket, contentType)
+	if err != nil {
+		log.Fatalf("Error creating auth key: %v", err)
+	}
+
+	GCloud.Upload(gCloudClient, signedURL, conf.CloudSettings.ProfileBucket, photoURL, key)
 
 	params := (&auth.UserToCreate{}).
 		Email(email).
@@ -18,7 +30,7 @@ func CreateFirebaseUser(client *auth.Client, email string, emailVerified bool, p
 		PhoneNumber(phoneNumber).
 		Password(password).
 		DisplayName(name).
-		PhotoURL(photoURL).
+		PhotoURL(conf.CloudSettings.URI + key).
 		Disabled(status)
 	usr, err := client.CreateUser(ctx, params)
 	if err != nil {

@@ -3,7 +3,6 @@ package signedurl
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -12,7 +11,7 @@ import (
 )
 
 // SignedURLoptions Returns signed url for users to interact with Gcloud without having credentials
-func SignedURLoptions(serviceAccount string, option string, bucket string) (string, string, error) {
+func SignedURLoptions(serviceAccount string, option string, bucket string, contentType string) (string, string, error) {
 	jsonKey, err := ioutil.ReadFile(serviceAccount)
 	if err != nil {
 		return "", "", fmt.Errorf("cannot read the JSON key file, err: %v", err)
@@ -23,15 +22,14 @@ func SignedURLoptions(serviceAccount string, option string, bucket string) (stri
 	}
 	key := uuid.New().String()
 
-	expires := time.Now().Add(time.Minute * 50)
+	expires := time.Now().Add(time.Minute * 5)
 	r, err := storage.SignedURL(bucket, key, &storage.SignedURLOptions{
 		GoogleAccessID: conf.Email,
 		PrivateKey:     conf.PrivateKey,
 		Method:         option,
 		Expires:        expires,
-		ContentType:    "image/png",
+		ContentType:    contentType,
 	})
 
-	log.Print(r)
 	return r, key, err
 }
