@@ -8,9 +8,11 @@ import (
 	firebase "firebase.google.com/go"
 	"firebase.google.com/go/auth"
 
-	"github.com/Rahul12344/pinstagrad-backend/config"
-	GCloud "github.com/Rahul12344/pinstagrad-backend/src/gcloud"
-	SignedURL "github.com/Rahul12344/pinstagrad-backend/src/gcloud/SignedURL"
+	"config"
+
+	GCloud "gcloud"
+
+	SignedURL "gcloud/SignedURL"
 )
 
 // CreateFirebaseUser Creates Firebase user for DB interactions
