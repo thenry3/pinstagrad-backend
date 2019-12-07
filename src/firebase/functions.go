@@ -22,8 +22,9 @@ func CreateFirebaseUser(conf *config.Config, contentType string, gCloudClient *s
 		log.Fatalf("Error creating auth key: %v", err)
 	}
 
-	GCloud.Upload(gCloudClient, signedURL, conf.CloudSettings.ProfileBucket, photoURL, key)
+	GCloud.Upload(gCloudClient, signedURL, conf.CloudSettings.ProfileBucket, photoURL, key, contentType)
 
+	// REGEX match ^\+[1-9]\d{1,14}$ for valid phonenumber
 	params := (&auth.UserToCreate{}).
 		Email(email).
 		EmailVerified(emailVerified).

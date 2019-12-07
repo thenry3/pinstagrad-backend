@@ -9,6 +9,23 @@ import (
 	firebase "firebase.google.com/go"
 )
 
+//AddLikes add liked photo to user's liked list
+func AddLikes(ctx context.Context, reference *db.Ref, currentUserUID string, photoPointer string) string {
+	currentUser := User{}
+	if err := reference.Child(currentUserUID).Get(ctx, &currentUser); err != nil {
+		log.Fatalln("Error reading from database:", err)
+	}
+	liked := append(currentUser.Liked, photoPointer)
+	currentUser.Liked = liked
+	err := reference.Child(currentUserUID).Update(ctx, map[string]interface{}{
+		"liked": currentUser.Liked,
+	})
+	if err != nil {
+		log.Fatalln("Error setting value:", err)
+	}
+	return photoPointer
+}
+
 // RetrieveIndividualPhoto retrieves singular image by uuid
 func RetrieveIndividualPhoto(ctx context.Context, reference *db.Ref, uuid string) Photo {
 	v := Photo{}

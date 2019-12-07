@@ -31,7 +31,7 @@ const (
 // User structure of user
 type User struct {
 	Name        string   `json:"name"`
-	Liked       []*Photo `json:"liked"`
+	Liked       []string `json:"liked"`
 	Pictures    int      `json:"pictures"`
 	Email       string   `json:"email"`
 	Password    string   `json:"password"`

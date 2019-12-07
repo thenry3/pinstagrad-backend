@@ -75,7 +75,7 @@ func GetBucket(client *storage.Client) *storage.BucketHandle {
 }
 
 // Upload uploads image to GCloud
-func Upload(client *storage.Client, signedURL string, bucketname string, image string, uuid string) {
+func Upload(client *storage.Client, signedURL string, bucketname string, image string, uuid string, contentType string) {
 	ctx := context.Background()
 
 	b, err := ioutil.ReadFile(image)
@@ -86,7 +86,7 @@ func Upload(client *storage.Client, signedURL string, bucketname string, image s
 	if err != nil {
 		log.Fatal(err)
 	}
-	req.Header.Add("Content-Type", "image/png")
+	req.Header.Add("Content-Type", contentType)
 	RESTclient := new(http.Client)
 	resp, err := RESTclient.Do(req)
 	if err != nil {
@@ -95,7 +95,7 @@ func Upload(client *storage.Client, signedURL string, bucketname string, image s
 
 	acl := client.Bucket(bucketname).Object(uuid).ACL()
 	if err := acl.Set(ctx, storage.AllUsers, storage.RoleReader); err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	fmt.Println(resp)

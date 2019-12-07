@@ -1,4 +1,4 @@
-#Pinstagrad Backend Fall 2019
+# Pinstagrad Backend Fall 2019
 
 Backend hosts API calls including uploading, retrieval, logging in, signing up, and logging out.
 For logging in, the front-end first signs a user in, generating a Firebase custom token. They send
