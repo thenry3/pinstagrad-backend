@@ -24,6 +24,30 @@ func CloudClient() *storage.Client {
 	return client
 }
 
+//NewBucket gets or creates new bucket with bucket name passed as a param
+func NewBucket(client *storage.Client, bucketName string) *storage.BucketHandle {
+	conf := config.New()
+
+	ctx := context.Background()
+
+	projectID := conf.CloudStorage.Project
+
+	bucket := client.Bucket(bucketName)
+	exists, err := bucket.Attrs(ctx)
+	if err != nil {
+		log.Printf("Bucket under creation: %s", bucketName)
+	}
+
+	if exists == nil {
+		if err := bucket.Create(ctx, projectID, nil); err != nil {
+			log.Fatalf("Failed to create bucket: %v", err)
+		}
+		fmt.Printf("Bucket %v created.\n", bucketName)
+	}
+
+	return bucket
+}
+
 // GetBucket gets or creates and gets Google Cloud bucket
 func GetBucket(client *storage.Client) *storage.BucketHandle {
 	conf := config.New()
@@ -37,7 +61,7 @@ func GetBucket(client *storage.Client) *storage.BucketHandle {
 	bucket := client.Bucket(bucketName)
 	exists, err := bucket.Attrs(ctx)
 	if err != nil {
-		log.Fatalf("Access error: %v", err)
+		log.Printf("Bucket under creation: %s", bucketName)
 	}
 
 	if exists == nil {
@@ -51,7 +75,7 @@ func GetBucket(client *storage.Client) *storage.BucketHandle {
 }
 
 // Upload uploads image to GCloud
-func Upload(client *storage.Client, signedURL string, bucketname string, image string, uuid string) {
+func Upload(client *storage.Client, signedURL string, bucketname string, image string, uuid string, contentType string) {
 	ctx := context.Background()
 
 	b, err := ioutil.ReadFile(image)
@@ -62,7 +86,7 @@ func Upload(client *storage.Client, signedURL string, bucketname string, image s
 	if err != nil {
 		log.Fatal(err)
 	}
-	req.Header.Add("Content-Type", "image/png")
+	req.Header.Add("Content-Type", contentType)
 	RESTclient := new(http.Client)
 	resp, err := RESTclient.Do(req)
 	if err != nil {
@@ -71,7 +95,7 @@ func Upload(client *storage.Client, signedURL string, bucketname string, image s
 
 	acl := client.Bucket(bucketname).Object(uuid).ACL()
 	if err := acl.Set(ctx, storage.AllUsers, storage.RoleReader); err != nil {
-		log.Fatal(err)
+		log.Print(err)
 	}
 
 	fmt.Println(resp)
