@@ -8,7 +8,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Rahul12344/pinstagrad-backend/config"
+	"config"
 
 	"cloud.google.com/go/storage"
 )

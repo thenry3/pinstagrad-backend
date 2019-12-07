@@ -12,21 +12,23 @@ import (
 
 	"firebase.google.com/go/db"
 
-	"github.com/Rahul12344/pinstagrad-backend/config"
+	"config"
 
 	"firebase.google.com/go/auth"
 
+	firebaseController "firebase"
+
 	"cloud.google.com/go/storage"
 	firebase "firebase.google.com/go"
-	firebaseController "github.com/Rahul12344/pinstagrad-backend/src/firebase"
 	"github.com/joho/godotenv"
 
-	"github.com/Rahul12344/pinstagrad-backend/src/database"
+	"database"
 
 	"github.com/gorilla/mux"
 
-	GCloud "github.com/Rahul12344/pinstagrad-backend/src/gcloud"
-	SignedURL "github.com/Rahul12344/pinstagrad-backend/src/gcloud/SignedURL"
+	GCloud "gcloud"
+
+	SignedURL "gcloud/SignedURL"
 )
 
 // Global variables
@@ -123,10 +125,10 @@ func sendLoginCredentials(w http.ResponseWriter, r *http.Request) {
 }
 
 func uploadPictureHandler(w http.ResponseWriter, r *http.Request) {
-	if currentUserID == "" {
+	/*if currentUserID == "" {
 		http.Error(w, "Anon User must be logged in to upload", 500)
 		return
-	}
+	}*/
 	contentType := r.FormValue("content")
 	id, err := strconv.Atoi(r.FormValue("userid"))
 	if err != nil {
@@ -147,7 +149,7 @@ func uploadPictureHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	photographer := r.FormValue("photographer")
 
-	signedURL, key, err := SignedURL.SignedURLoptions("config/pinstagrad-back-7.json", "PUT", conf.CloudStorage.Bucket, contentType)
+	signedURL, key, err := SignedURL.SignedURLoptions("./vendor/config/pinstagrad-back-7.json", "PUT", conf.CloudStorage.Bucket, contentType)
 
 	GCloud.Upload(cloudClient, signedURL, conf.CloudStorage.Bucket, point, key, contentType)
 	if err != nil {
@@ -213,7 +215,7 @@ func retrievePicture(w http.ResponseWriter, r *http.Request) {
 func init() {
 	currentUserID = ""
 
-	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "/Users/rahulnatarajan/go/src/github.com/Rahul12344/pinstagrad-backend/config/pinstagrad-back-7.json")
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", "./vendor/config/pinstagrad-back-7.json")
 
 	if err := godotenv.Load(); err != nil {
 		log.Print("No .env file found")
